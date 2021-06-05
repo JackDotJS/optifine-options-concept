@@ -93,6 +93,8 @@ const pages = {
 }
 
 document.addEventListener(`DOMContentLoaded`, async () => {
+  const click = new Audio(`snd/click.ogg`);
+
   const load = async (pagename) => {
     const page = pages[pagename];
     if (page == null) throw new RangeError(`Invalid page requested: ${pagename}`);
@@ -122,6 +124,8 @@ document.addEventListener(`DOMContentLoaded`, async () => {
           label.classList.add(`label`);
           label.innerHTML = optionData.label;
 
+          const clickEvents = [];
+
           const updateOption = async (e) => {
             let value = e.value;
 
@@ -141,6 +145,12 @@ document.addEventListener(`DOMContentLoaded`, async () => {
           }
 
           row.appendChild(option);
+
+          if ([`button`, `page`, `slider`, `toggle`].includes(optionData.type)) {
+            clickEvents.push(() => {
+              click.currentTime = 0; click.play();
+            });
+          }
 
           if (optionData.type === `button`) {
             option.classList.add(`button`)
@@ -175,15 +185,21 @@ document.addEventListener(`DOMContentLoaded`, async () => {
             toggle.checked = opts[optionData.opt];
             toggle.style.display = `none`;
 
-            option.addEventListener(`click`, async () => {
+            clickEvents.push(() => {
               toggle.checked = !toggle.checked;
-              updateOption(toggle)
+              updateOption(toggle);
             });
 
             updateOption(toggle)
 
             option.appendChild(toggle);
           }
+
+          option.addEventListener(`mouseup`, async () => {
+            for (const func of clickEvents) {
+              func();
+            }
+          });
 
           option.appendChild(label);
         }
