@@ -1,8 +1,4 @@
-const opts = {
-  fov: 70,
-  realms_notif: `ON`,
-  test: `opt1`
-}
+const opts = {}
 
 const pages = {
   default: {
@@ -13,7 +9,7 @@ const pages = {
         {
           type: `button`,
           label: `Back`,
-          wide: true,
+          width: 3,
           centered: true,
           page: `options`
         }
@@ -29,7 +25,9 @@ const pages = {
           type: `slider`,
           label: `FOV: %VALUE%`,
           opt: `fov`,
+          width: 2,
           min: 30,
+          default: 70,
           max: 110,
           named: {
             70: `Normal`,
@@ -40,6 +38,7 @@ const pages = {
           type: `switch`,
           label: `Realms Notifications: %VALUE%`,
           opt: `realms_notif`,
+          width: 2,
           options: [
             `ON`,
             `OFF`
@@ -47,17 +46,21 @@ const pages = {
         }
       ],
       [
-        // spacer
+        {
+          type: `spacer`
+        }
       ],
       [
         {
           type: `button`,
           label: `Skin Customization...`,
+          width: 2,
           page: `skin`
         },
         {
           type: `button`,
           label: `Music & Sounds...`,
+          width: 2,
           page: `sound`
         }
       ],
@@ -65,11 +68,13 @@ const pages = {
         {
           type: `button`,
           label: `Video Settings...`,
+          width: 2,
           page: `video`
         },
         {
           type: `button`,
           label: `Controls...`,
+          width: 2,
           page: `controls`
         }
       ],
@@ -77,11 +82,13 @@ const pages = {
         {
           type: `button`,
           label: `Language...`,
+          width: 2,
           page: `lang`
         },
         {
           type: `button`,
           label: `Chat Settings...`,
+          width: 2,
           page: `chat`
         }
       ],
@@ -89,23 +96,27 @@ const pages = {
         {
           type: `button`,
           label: `Resource Packs...`,
+          width: 2,
           page: `rps`
         },
         {
           type: `button`,
           label: `Accessibility Settings...`,
+          width: 2,
           page: `access`
         }
       ],
       [
-        // spacer
+        {
+          type: `spacer`
+        }
       ],
       [
         {
           type: `button`,
           label: `OptiFine Settings...`,
-          page: `optifine_main`,
-          wide: true,
+          page: `of_main`,
+          width: 3,
           centered: true
         }
       ],
@@ -114,155 +125,779 @@ const pages = {
           type: `button`,
           label: `Done`,
           url: `https://github.com/JackDotJS/optifine-options-concept`,
-          wide: true,
+          width: 3,
           centered: true
         }
       ],
     ]
-  }
-}
+  },
+  of_main: {
+    type: `normal`,
+    title: `OptiFine Settings`,
+    subtitle: `Hover over any option for detailed information.`,
+    inputs: [
+      [
+        {
+          type: `switch`,
+          label: `Preset: %VALUE%`,
+          opt: `of_quality`,
+          centered: true,
+          width: 3,
+          options: [
+            `Default`,
+            `Completely Vanilla`,
+            `More Quality`,
+            `Maximum Quality`,
+            `More Performance`,
+            `Maximum Performance`,
+            `Custom`,
+          ],
+        },
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Graphics...`,
+          page: `of_graphics`,
+          centered: true,
+          width: 4
+        },
+      ],
+      [
+        {
+          type: `button`,
+          label: `Performance...`,
+          page: `of_perf`,
+          centered: true,
+          width: 4
+        },
+      ],
+      [
+        {
+          type: `button`,
+          label: `QOL...`,
+          page: `of_qol`,
+          centered: true,
+          width: 4
+        },
+      ],
+      [
+        {
+          type: `button`,
+          label: `OptiFine Cape...`,
+          page: `of_cape`,
+          centered: true,
+          width: 4
+        },
+      ],
+      [
+        {
+          type: `button`,
+          label: `Advanced...`,
+          page: `of_adv`,
+          centered: true,
+          width: 4
+        },
+      ],
+      [
+        {
+          type: `button`,
+          label: `About...`,
+          page: `of_info`,
+          centered: true,
+          width: 4
+        },
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `options`
+        }
+      ]
+    ]
+  },
+  of_graphics: {
+    type: `scrollable_normal`,
+    title: `Graphics Settings`,
+    inputs: [
+      [
+        {
+          type: `switch`,
+          label: `Window Mode: %VALUE%`,
+          opt: `of_win_mode`,
+          width: 4,
+          centered: true,
+          options: [
+            `Windowed`,
+            `Borderless Window`,
+            `Fullscreen`,
+          ],
+          onchange: () => {
+            const res_opts = document.querySelectorAll(`.of_res_opts`);
+            const display_opts = document.querySelectorAll(`.of_display_opts`);
 
-document.addEventListener(`DOMContentLoaded`, async () => {
-  const click = new Audio(`snd/click.ogg`);
-
-  const load = async (pagename) => {
-    const page = pages[pagename];
-
-    const inputs = document.getElementById(`inputList`);
-    while (inputs.firstChild) inputs.removeChild(inputs.lastChild);
-
-    if (page == null) {
-      console.warn(`Invalid page requested: ${pagename}`);
-      load(`default`);
-      return;
-    }
-
-    const title = document.getElementById(`menuTitle`);
-    title.innerHTML = page.title;
-
-    if ([`normal`].includes(page.type)) title.classList = `normal`;
-    
-    if (page.type === `normal`) {
-      for (const rowData of page.inputs) {
-        const row = document.createElement(`div`);
-        row.classList.add(`row`)
-
-        inputs.appendChild(row);
-
-        for (const optionData of rowData) {
-          const option = document.createElement(`div`);
-
-          const label = document.createElement(`div`);
-          label.classList.add(`label`);
-          label.innerHTML = optionData.label;
-
-          const clickEvents = [];
-
-          const updateOption = async (e) => {
-            let value = e.value;
-            let text = value;
-
-            if (optionData.named != null) {
-              const name = optionData.named[value];
-              if (name != null) text = name;
+            if (opts.of_win_mode === `Windowed`) {
+              for (const button of [...res_opts, ...display_opts]) {
+                if (!button.classList.contains(`disabled`)) button.classList.add(`disabled`);
+              }
             }
 
-            opts[optionData.opt] = value;
-
-            label.innerHTML = optionData.label.replace(/%VALUE%/g, text);
-          }
-
-          row.appendChild(option);
-
-          if ([`button`, `slider`, `switch`].includes(optionData.type)) {
-            option.classList.add(`optionBase`);
-
-            if (optionData.wide) option.classList.add(`wide`);
-            if (optionData.centered) option.classList.add(`centered`);
-            if (optionData.disabled) option.classList.add(`disabled`);
-
-            clickEvents.push(() => {
-              click.currentTime = 0; click.play();
-            });
-          }
-
-          if (optionData.type === `button`) {
-            option.classList.add(`button`)
-
-            if (optionData.page != null) {
-              clickEvents.push(() => {
-                load(optionData.page);
-              });
-            }
-
-            if (optionData.url != null) {
-              clickEvents.push(() => {
-                window.open(optionData.url, `_blank`);
-              });
-            }
-          }
-
-          if (optionData.type === `switch`) {
-            option.classList.add(`button`);
-
-            const list = document.createElement(`select`);
-            list.autocomplete = `off`;
-
-            for (const option of optionData.options) {
-              const oe = document.createElement(`option`);
-              oe.value = option;
-
-              list.appendChild(oe);
-            }
-
-            list.value = opts[optionData.opt];
-
-            clickEvents.push(() => {
-              const next = optionData.options.indexOf(list.value) + 1;
-
-              if (next === optionData.options.length) {
-                list.value = optionData.options[0];
-              } else {
-                list.value = optionData.options[next];
+            if (opts.of_win_mode === `Borderless Window`) {
+              for (const button of res_opts) {
+                if (button.classList.contains(`disabled`)) button.classList.remove(`disabled`);
               }
 
-              updateOption(list);
-            });
-
-            updateOption(list);
-
-            option.appendChild(list);
-          }
-
-          if (optionData.type === `slider`) {
-            option.classList.add(`slider`)
-
-            const slider = document.createElement(`input`);
-            slider.type = `range`;
-            slider.min = optionData.min;
-            slider.max = optionData.max;
-            slider.autocomplete = `off`
-            slider.value = opts[optionData.opt];
-
-            slider.addEventListener(`input`, async () => { updateOption(slider) });
-            updateOption(slider)
-
-            option.appendChild(slider);
-          }
-
-          option.addEventListener(`click`, async () => {
-            for (const func of clickEvents) {
-              func();
+              for (const button of display_opts) {
+                if (!button.classList.contains(`disabled`)) button.classList.add(`disabled`);
+              }
             }
-          });
 
-          option.appendChild(label);
+            if (opts.of_win_mode === `Fullscreen`) {
+              for (const button of [...res_opts, ...display_opts]) {
+                if (button.classList.contains(`disabled`)) button.classList.remove(`disabled`);
+              }
+            }
+          }
         }
-      }
-    }
+      ],
+      [
+        {
+          type: `slider`,
+          label: `Width: %VALUE%`,
+          class: `of_res_opts`,
+          opt: `of_win_width`,
+          width: 2,
+          min: 640,
+          default: window.innerWidth,
+          max: screen.width
+        },
+        {
+          type: `slider`,
+          label: `Height: %VALUE%`,
+          class: `of_res_opts`,
+          opt: `of_win_height`,
+          width: 2,
+          min: 480,
+          default: window.innerHeight,
+          max: screen.height
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Refresh Rate: %VALUE%`,
+          class: `of_display_opts`,
+          opt: `of_win_rate`,
+          width: 2,
+          options: [
+            `60`
+          ]
+        },
+        {
+          type: `switch`,
+          label: `Bit Depth: %VALUE%`,
+          class: `of_display_opts`,
+          opt: `of_win_depth`,
+          width: 2,
+          options: [
+            screen.colorDepth,
+            screen.pixelDepth
+          ]
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Enable VSync: %VALUE%`,
+          opt: `vsync`,
+          width: 2,
+          options: [
+            `OFF`,
+            `ON`
+          ],
+          onchange: () => {
+            const fpslimit = document.querySelector(`.of_fpsmax`);
 
+            if (opts.vsync === `ON`) {
+              if (!fpslimit.classList.contains(`disabled`)) fpslimit.classList.add(`disabled`);
+            } else {
+              if (fpslimit.classList.contains(`disabled`)) fpslimit.classList.remove(`disabled`);
+            }
+          }
+        },
+        {
+          type: `slider`,
+          label: `Framerate Limit: %VALUE% FPS`,
+          class: `of_fpsmax`,
+          opt: `fps_limit`,
+          width: 2,
+          min: 5,
+          default: 120,
+          max: 260,
+          step: 5,
+          named: {
+            260: `Unlimited`
+          }
+        },
+      ],
+      [
+        {
+          type: `slider`,
+          label: `Render Distance: %VALUE% chunks`,
+          opt: `r_dist`,
+          width: 4,
+          min: 2,
+          default: 8,
+          max: 48
+        },
+      ],
+      [
+        {
+          type: `slider`,
+          label: `Brightness: +%VALUE%%`,
+          opt: `brightness`,
+          width: 4,
+          min: 0,
+          default: 0,
+          max: 100,
+          named: {
+            0: `Moody`,
+            100: `Bright`
+          }
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Smooth Lighting: %VALUE%`,
+          opt: `smoothlight`,
+          width: 2,
+          options: [
+            `Complex`,
+            `OFF`,
+            `Simple`
+          ],
+          onchange: () => {
+            const sl_level = document.querySelector(`.of_sl_level`);
+
+            if (opts.smoothlight === `OFF`) {
+              if (!sl_level.classList.contains(`disabled`)) sl_level.classList.add(`disabled`);
+            } else {
+              if (sl_level.classList.contains(`disabled`)) sl_level.classList.remove(`disabled`);
+            }
+          }
+        },
+        {
+          type: `slider`,
+          label: `Smooth Lighting Mix: %VALUE%%`,
+          class: `of_sl_level`,
+          opt: `of_sl_level`,
+          width: 2,
+          min: 0,
+          default: 100,
+          max: 100,
+          named: {
+            0: `OFF`,
+            100: `ON`
+          }
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Dynamic Lights: %VALUE%`,
+          opt: `of_dyn_light`,
+          width: 2,
+          options: [
+            `OFF`,
+            `Fast`,
+            `Fancy`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Entity Shadows: %VALUE%`,
+          opt: `of_ent_shadow`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Shaders...`,
+          width: 3,
+          centered: true,
+          page: `of_shaders`
+        }
+      ]
+    ],
+    inputs_upper: [],
+    inputs_lower: [
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `of_main`
+        }
+      ]
+    ]
+  },
+  of_perf: {
+    type: `normal`,
+    title: `Performance Settings`,
+    inputs: [
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `of_main`
+        }
+      ]
+    ]
+  },
+  of_qol: {
+    type: `normal`,
+    title: `Quality of Life Settings`,
+    inputs: [
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `of_main`
+        }
+      ]
+    ]
+  },
+  of_cape: {
+    type: `normal`,
+    title: `OptiFine Cape`,
+    inputs: [
+      [
+        // insert image later
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Open Cape Editor`,
+          width: 3,
+          centered: true,
+          url: `https://optifine.net/capeChange`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Reload Cape`,
+          width: 3,
+          centered: true
+        }
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        // insert text later
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `of_main`
+        }
+      ]
+    ]
+  },
+  of_adv: {
+    type: `normal`,
+    title: `Advanced Settings`,
+    inputs: [
+      [
+        {
+          type: `switch`,
+          label: `Lagometer: %VALUE%`,
+          opt: `of_lagometer`,
+          width: 2,
+          options: [
+            `OFF`,
+            `ON`,
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Debug Profiler: %VALUE%`,
+          opt: `of_debugprofiler`,
+          width: 2,
+          options: [
+            `OFF`,
+            `ON`,
+          ],
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Show GL Errors: %VALUE%`,
+          opt: `of_glerrors`,
+          width: 2,
+          options: [
+            `OFF`,
+            `ON`,
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Shader Pack Debugging: %VALUE%`,
+          opt: `of_internalshader`,
+          width: 2,
+          options: [
+            `OFF`,
+            `ON`,
+          ],
+        },
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `of_main`
+        }
+      ]
+    ]
+  },
+  of_info: {
+    type: `normal`,
+    title: ``,
+    inputs: [
+      [
+        {
+          type: `text`,
+          centered: true,
+          content: [
+            `OptiFine: Optimization and Fine-tuning`,
+            `A Minecraft mod by sp614x`,
+            ``,
+            ``,
+            `Official Website`,
+            `<a href="https://optifine.net/home">https://optifine.net/home</a>`,
+            ``,
+            `GitHub`,
+            `<a href="https://github.com/sp614x/optifine">https://github.com/sp614x/optifine</a>`,
+          ].join(`\n<br>`)
+        }
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `text`,
+          centered: true,
+          content: [
+            `OptiFine Version: HD G8 Ultra`,
+            `Minecraft Version: 1.16.5`
+          ].join(`\n<br>`)
+        }
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Done`,
+          width: 3,
+          centered: true,
+          page: `of_main`
+        }
+      ]
+    ]
+  },
+}
+
+const click = new Audio(`snd/click.ogg`);
+
+const load = async (pagename) => {
+  const page = pages[pagename];
+
+  // clear all ui elements from previous page, if there are any
+  const hInputs = document.getElementById(`headerInputs`);
+  while (hInputs.firstChild) hInputs.removeChild(hInputs.lastChild);
+
+  const mInputs = document.getElementById(`mainInputs`);
+  while (mInputs.firstChild) mInputs.removeChild(mInputs.lastChild);
+
+  const fInputs = document.getElementById(`footerInputs`);
+  while (fInputs.firstChild) fInputs.removeChild(fInputs.lastChild);
+
+  // clear subtitles, if there are any
+  const subtitles = document.querySelectorAll(`.subtitle`);
+  for (const p of subtitles) {
+    p.remove();
+  }
+
+  if (page == null) {
+    console.warn(`Invalid page requested: ${pagename}`);
+    load(`default`);
     return;
   }
 
+  const afterloadfuncs = [];
+
+  if (pagename !== `default`) pages.default.inputs[0][0].page = pagename;
+
+  const title = document.querySelector(`#menuTitle`);
+  title.querySelector(`p`).innerHTML = page.title;
+
+  if (page.subtitle) {
+    const subtitle = document.createElement(`p`);
+
+    subtitle.innerHTML = page.subtitle;
+    subtitle.classList.add(`subtitle`);
+
+    title.appendChild(subtitle);
+  }
+
+  if ([`normal`].includes(page.type)) {
+    title.classList = `normal`;
+  } else {
+    title.classList = `narrow`;
+  }
+
+  if (page.type === `scrollable_normal`) {
+    document.querySelector(`#inputContainer`).classList = `scrollable`;
+  } else {
+    document.querySelector(`#inputContainer`).classList = ``;
+  }
+
+  const processInputs = (src, dest) => {
+    for (const rowData of src) {
+      const row = document.createElement(`div`);
+      row.classList.add(`row`)
+  
+      dest.appendChild(row);
+  
+      for (const optionData of rowData) {
+        const option = document.createElement(`div`);
+        let label = null;
+  
+        if (optionData.class != null) option.classList.add(optionData.class);
+  
+        if (optionData.centered) option.classList.add(`centered`);
+        if (optionData.disabled) option.classList.add(`disabled`);
+  
+        if (optionData.label != null) {
+          label = document.createElement(`div`);
+          label.classList.add(`label`);
+          label.innerHTML = optionData.label;
+        }
+  
+        const clickEvents = [];
+  
+        const updateOption = async (e) => {
+          let value = e.value;
+          let text = value;
+  
+          let rgx = `%VALUE%`
+  
+          if (optionData.named != null) {
+            const name = optionData.named[value];
+            if (name != null) {
+              text = ` ` + name;
+              rgx = `[^:]*${rgx}.*`; // erases any/all text around the %VALUE% placeholder
+            }
+          }
+  
+          opts[optionData.opt] = value;
+  
+          if (label != null) label.innerHTML = optionData.label.replace(new RegExp(rgx), text);
+        }
+  
+        row.appendChild(option);
+  
+        if ([`button`, `slider`, `switch`].includes(optionData.type)) {
+          option.classList.add(`optionBase`);
+  
+          if (optionData.width != null) {
+            option.classList.add(`width${optionData.width}`);
+          } else {
+            option.classList.add(`width1`);
+          }
+  
+          clickEvents.push(() => {
+            click.currentTime = 0; click.play();
+          });
+        }
+  
+        if (optionData.type === `text`) {
+          option.classList.add(`text`);
+          option.innerHTML = optionData.content;
+        }
+  
+        if (optionData.type === `spacer`) {
+          option.classList.add(`spacer`);
+        }
+  
+        if (optionData.type === `button`) {
+          option.classList.add(`button`)
+  
+          if (optionData.page != null) {
+            clickEvents.push(() => {
+              load(optionData.page);
+            });
+          }
+  
+          if (optionData.url != null) {
+            clickEvents.push(() => {
+              window.open(optionData.url, `_blank`);
+            });
+          }
+        }
+  
+        if (optionData.type === `switch`) {
+          option.classList.add(`button`);
+  
+          if (opts[optionData.opt] == null) opts[optionData.opt] = optionData.options[0];
+  
+          const list = document.createElement(`select`);
+          list.autocomplete = `off`;
+  
+          for (const option of optionData.options) {
+            const oe = document.createElement(`option`);
+            oe.value = option;
+  
+            list.appendChild(oe);
+          }
+  
+          list.value = opts[optionData.opt];
+  
+          clickEvents.push(() => {
+            const next = optionData.options.indexOf(list.value) + 1;
+  
+            if (next === optionData.options.length) {
+              list.value = optionData.options[0];
+            } else {
+              list.value = optionData.options[next];
+            }
+  
+            updateOption(list);
+          });
+  
+          updateOption(list);
+  
+          option.appendChild(list);
+        }
+  
+        if (optionData.type === `slider`) {
+          option.classList.add(`slider`)
+  
+          if (opts[optionData.opt] == null) opts[optionData.opt] = optionData.default;
+  
+          const slider = document.createElement(`input`);
+          slider.type = `range`;
+          slider.min = optionData.min;
+          slider.max = optionData.max;
+          slider.autocomplete = `off`
+          slider.value = opts[optionData.opt];
+  
+          if (optionData.step != null) slider.step = optionData.step;
+  
+          slider.addEventListener(`input`, async () => { updateOption(slider) });
+          updateOption(slider)
+  
+          option.appendChild(slider);
+        }
+  
+        if (optionData.onchange != null) {
+          clickEvents.push(optionData.onchange);
+          afterloadfuncs.push(optionData.onchange);
+        }
+  
+        option.addEventListener(`click`, async () => {
+          for (const func of clickEvents) {
+            func();
+          }
+        });
+  
+        if (label != null) option.appendChild(label);
+      }
+    }
+  }
+
+  processInputs(page.inputs, mInputs);
+
+  if (page.inputs_upper) processInputs(page.inputs_upper, hInputs);
+  if (page.inputs_lower) processInputs(page.inputs_lower, fInputs);
+
+  for (const func of afterloadfuncs) {
+    func();
+  }
+
+  return;
+}
+
+document.addEventListener(`DOMContentLoaded`, async () => {
   load(`options`);
 });

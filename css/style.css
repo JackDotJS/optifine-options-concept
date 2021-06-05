@@ -27,6 +27,7 @@
 }
 
 html {
+  overflow: hidden;
   background: linear-gradient(
     rgba(0, 0, 0, 0.745),
     rgba(0, 0, 0, 0.745)
@@ -51,47 +52,103 @@ body {
   margin: 0;
 }
 
+a {
+  color: #5555FF;
+  text-shadow: .1em .1em #15153F;
+}
+
 #menu {
   display: flex;
+  align-items: center;
   flex-direction: column;
 
-  min-width: 31em;
+  width: 100%;
 }
 
 #menuTitle {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 8em;
 }
 
 #menuTitle.normal {
-  margin: 1em 1em 8em;
+  margin: 1em 1em 2em;
 }
 
 #menuTitle.narrow {
+  min-height: 1em;
   margin: 0.5em 1em 0.25em;
+}
+
+#menuTitle p {
+  margin: 0 0 0.25em;
+}
+
+#mainInputs {
+  min-width: 31em;
+  max-width: 31em;
+}
+
+#inputContainer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: visible;
+  width: 200%;
+  height: 100%;
+}
+
+#inputContainer.scrollable {
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.5)
+  );
+  box-shadow: inset 0 0 0.75em #000;
+  overflow-y: auto;
 }
 
 .row {
   display: flex;
   justify-content: space-between;
+  margin: 0.55em 0;
+}
+
+.spacer {
   height: 2.5em;
 }
 
 .optionBase {
   position: relative;
-  width: 296px;
   height: 36px;
   background-color: #2B2B2B;
   outline: 2px solid black;
   box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .optionBase input[type=checkbox], .optionBase select {
   display: none;
 }
 
-.wide {
+.width0 {
+  width: 40px;
+}
+
+.width1 {
+  width: 144px;
+}
+
+.width2 {
+  width: 296px;
+}
+
+.width3 {
   width: 396px;
+}
+
+.width4 {
+  width: 100%;
 }
 
 .centered {
@@ -111,6 +168,10 @@ body {
   color: #A0A0A0;
   text-shadow: .1em .1em #282828;
   pointer-events: none;
+}
+
+.text {
+  text-align: center;
 }
 
 :where(.button, .toggle):not(.disabled) {
