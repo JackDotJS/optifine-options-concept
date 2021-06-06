@@ -235,6 +235,28 @@ const pages = {
     inputs: [
       [
         {
+          type: `text`,
+          centered: true,
+          content: `General`
+        }
+      ],
+      [
+        {
+          type: `slider`,
+          label: `Brightness: +%VALUE%%`,
+          opt: `brightness`,
+          width: 4,
+          min: 0,
+          default: 0,
+          max: 100,
+          named: {
+            0: `Moody`,
+            100: `Bright`
+          }
+        },
+      ],
+      [
+        {
           type: `switch`,
           label: `Window Mode: %VALUE%`,
           opt: `of_win_mode`,
@@ -281,7 +303,7 @@ const pages = {
           opt: `of_win_width`,
           width: 2,
           min: 640,
-          default: window.innerWidth,
+          default: screen.width,
           max: screen.width
         },
         {
@@ -291,7 +313,7 @@ const pages = {
           opt: `of_win_height`,
           width: 2,
           min: 480,
-          default: window.innerHeight,
+          default: screen.height,
           max: screen.height
         },
       ],
@@ -321,7 +343,7 @@ const pages = {
       [
         {
           type: `switch`,
-          label: `Enable VSync: %VALUE%`,
+          label: `Vertical Sync: %VALUE%`,
           opt: `vsync`,
           width: 2,
           options: [
@@ -356,6 +378,101 @@ const pages = {
       [
         {
           type: `slider`,
+          label: `Anti-aliasing: %VALUE%`,
+          opt: `of_aa`,
+          width: 2,
+          min: 0,
+          default: 0,
+          max: 6,
+          named: {
+            0: `OFF`,
+            1: `2x`,
+            2: `4x`,
+            3: `6x`,
+            4: `8x`,
+            5: `12x`,
+            6: `16x` 
+          }
+        },
+        {
+          type: `slider`,
+          label: `Anisotropic Filtering: %VALUE%`,
+          opt: `of_af`,
+          width: 2,
+          min: 0,
+          default: 0,
+          max: 3,
+          named: {
+            0: `OFF`,
+            1: `4x`,
+            2: `8x`,
+            3: `16x` 
+          }
+        },
+      ],
+      [
+        {
+          type: `slider`,
+          label: `Mipmap Levels: %VALUE%`,
+          opt: `of_mip`,
+          width: 2,
+          min: 0,
+          default: 0,
+          max: 4,
+          named: {
+            0: `OFF`,
+            4: `Maximum` 
+          }
+        },
+        {
+          type: `switch`,
+          label: `Mipmap Mode: %VALUE%`,
+          opt: `of_mip_mode`,
+          width: 2,
+          options: [
+            `Nearest`,
+            `Linear`,
+            `Bilinear`,
+            `Trilinear`
+          ]
+        },
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `text`,
+          centered: true,
+          content: `Shaders`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `Shaders...`,
+          width: 4,
+          centered: true,
+          page: `of_shaders`
+        }
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `text`,
+          centered: true,
+          content: `World`
+        }
+      ],
+      [
+        {
+          type: `slider`,
           label: `Render Distance: %VALUE% chunks`,
           opt: `r_dist`,
           width: 4,
@@ -367,15 +484,15 @@ const pages = {
       [
         {
           type: `slider`,
-          label: `Brightness: +%VALUE%%`,
-          opt: `brightness`,
+          label: `Entity Render Distance: %VALUE%%`,
+          opt: `of_entity_dist`,
           width: 4,
-          min: 0,
-          default: 0,
-          max: 100,
+          min: 50,
+          default: 100,
+          max: 500,
+          step: 25,
           named: {
-            0: `Moody`,
-            100: `Bright`
+            100: `Default`
           }
         },
       ],
@@ -402,7 +519,7 @@ const pages = {
         },
         {
           type: `slider`,
-          label: `Smooth Lighting Mix: %VALUE%%`,
+          label: `Smooth Lighting Amount: %VALUE%%`,
           class: `of_sl_level`,
           opt: `of_sl_level`,
           width: 2,
@@ -410,10 +527,287 @@ const pages = {
           default: 100,
           max: 100,
           named: {
-            0: `OFF`,
-            100: `ON`
+            0: `OFF`
           }
         },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Clouds: %VALUE%`,
+          opt: `clouds`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Fancy`,
+            `OFF`
+          ],
+        },
+        {
+          type: `slider`,
+          label: `Cloud Height: +%VALUE%%`,
+          opt: `of_cloud_height`,
+          width: 2,
+          min: 0,
+          default: 0,
+          max: 100,
+          named: {
+            0: `Default`,
+            100: `Sky High`
+          }
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Tree Leaves: %VALUE%`,
+          opt: `of_leaves`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Smart`,
+            `Fancy`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Weather Effects: %VALUE%`,
+          opt: `of_weather`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Fancy`,
+            `OFF`
+          ],
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Sky: %VALUE%`,
+          opt: `of_sky`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Stars: %VALUE%`,
+          opt: `of_stars`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Sun & Moon: %VALUE%`,
+          opt: `of_sky`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Entity Shadows: %VALUE%`,
+          opt: `ent_shadow`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Fog: %VALUE%`,
+          opt: `of_fog`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Fancy`,
+            `OFF`
+          ],
+        },
+        {
+          type: `slider`,
+          label: `Fog Start: 0.%VALUE%`,
+          opt: `of_fog_dist`,
+          width: 2,
+          min: 2,
+          default: 8,
+          max: 8
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Translucent Blocks: %VALUE%`,
+          opt: `of_translucency`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Fancy`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Alternate Blocks: %VALUE%`,
+          opt: `of_alt_blocks`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Swamp Colors: %VALUE%`,
+          opt: `of_swamp_col`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Fancy`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Dropped Items: %VALUE%`,
+          opt: `of_ent_items`,
+          width: 2,
+          options: [
+            `Default`,
+            `Fast`,
+            `Fancy`
+          ],
+        },
+      ],
+      [
+        {
+          type: `slider`,
+          label: `Biome Blend: %VALUE%x%VALUE%`,
+          opt: `biomeblend`,
+          width: 2,
+          min: 1,
+          default: 5,
+          max: 15,
+          step: 2,
+          named: {
+            1: `OFF`
+          }
+        },
+        {
+          type: `slider`,
+          label: `Particles: %VALUE%x%VALUE%`,
+          opt: `particles`,
+          width: 2,
+          min: 0,
+          default: 2,
+          max: 2,
+          named: {
+            0: `Minimal`,
+            1: `Decreased`,
+            2: `All`
+          }
+        },
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `text`,
+          centered: true,
+          content: `Animations`
+        }
+      ],
+      [
+        {
+          type: `button`,
+          label: `All ON`,
+          opt: `of_anims_on`,
+          width: 2
+        },
+        {
+          type: `button`,
+          label: `All OFF`,
+          opt: `of_anims_off`,
+          width: 2,
+        }
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Water: %VALUE%`,
+          opt: `of_anims_water`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Lava: %VALUE%`,
+          opt: `of_anims_lava`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        }
+      ],
+      [
+        {
+          type: `switch`,
+          label: `Fire: %VALUE%`,
+          opt: `of_anims_fire`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        },
+        {
+          type: `switch`,
+          label: `Portals: %VALUE%`,
+          opt: `of_anims_portal`,
+          width: 2,
+          options: [
+            `ON`,
+            `OFF`
+          ],
+        }
+      ],
+      [
+        {
+          type: `spacer`
+        }
+      ],
+      [
+        {
+          type: `text`,
+          centered: true,
+          content: `Extras`
+        }
       ],
       [
         {
@@ -426,34 +820,11 @@ const pages = {
             `Fast`,
             `Fancy`
           ],
-        },
-        {
-          type: `switch`,
-          label: `Entity Shadows: %VALUE%`,
-          opt: `of_ent_shadow`,
-          width: 2,
-          options: [
-            `ON`,
-            `OFF`
-          ],
-        },
-      ],
-      [
-        {
-          type: `spacer`
-        }
-      ],
-      [
-        {
-          type: `button`,
-          label: `Shaders...`,
-          width: 3,
-          centered: true,
-          page: `of_shaders`
         }
       ]
     ],
-    inputs_upper: [],
+    inputs_upper: [
+    ],
     inputs_lower: [
       [
         {
@@ -772,7 +1143,7 @@ const load = async (pagename) => {
   
           opts[optionData.opt] = value;
   
-          if (label != null) label.innerHTML = optionData.label.replace(new RegExp(rgx), text);
+          if (label != null) label.innerHTML = optionData.label.replace(new RegExp(rgx, `g`), text);
         }
   
         row.appendChild(option);
